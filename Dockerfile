@@ -1,5 +1,8 @@
 FROM golang:1.13.4
-MAINTAINER qwertyuiop2423840@gmail.com
+
+LABEL Author xluo62@gmail.com
+LABEL Name around
+LABEL Version 2.0
 
 WORKDIR /go/src/around
 ADD . /go/src/around
