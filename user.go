@@ -126,7 +126,7 @@ func handlerSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.Username == "" || user.Password == "" || regexp.MustCompile(`^[a-z0-9]$`).MatchString(user.Username) {
+	if user.Username == "" || user.Password == "" || !regexp.MustCompile(`^[a-z0-9]+$`).MatchString(user.Username) {
 		http.Error(w, "Invalid username or password", http.StatusBadRequest)
 		fmt.Printf("Invalid username or password\n")
 		return
