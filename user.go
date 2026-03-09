@@ -10,6 +10,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/olivere/elastic"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const (
@@ -35,7 +36,7 @@ func checkUser(username, password string) (bool, error) {
 	var utype User
 	for _, item := range searchResult.Each(reflect.TypeOf(utype)) {
 		if u, ok := item.(User); ok {
-			if u.Password == password {
+			if err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password)); err == nil {
 				fmt.Printf("Login as %s\n", username)
 				return true, nil
 			}
@@ -126,11 +127,19 @@ func handlerSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if user.Username == "" || user.Password == "" || regexp.MustCompile(`^[a-z0-9]$`).MatchString(user.Username) {
+	if user.Username == "" || user.Password == "" || !regexp.MustCompile(`^[a-z0-9]+$`).MatchString(user.Username) {
 		http.Error(w, "Invalid username or password", http.StatusBadRequest)
 		fmt.Printf("Invalid username or password\n")
 		return
 	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Failed to process password", http.StatusInternalServerError)
+		fmt.Printf("Failed to hash password %v\n", err)
+		return
+	}
+	user.Password = string(hashedPassword)
 
 	success, err := addUser(&user)
 	if err != nil {
