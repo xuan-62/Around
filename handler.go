@@ -11,7 +11,7 @@ import (
 	"strconv"
 
 	"cloud.google.com/go/storage"
-	jwt "github.com/dgrijalva/jwt-go/v4"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/olivere/elastic"
 	"github.com/pborman/uuid"
 )
@@ -113,6 +113,9 @@ func handlerPost(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Failed to save post to Elasticsearch %v\n", err)
 		return
 	}
+
+	fmt.Printf("Post saved successfully: %s\n", id)
+	w.WriteHeader(http.StatusOK)
 }
 
 func handlerSearch(w http.ResponseWriter, r *http.Request) {

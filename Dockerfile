@@ -14,7 +14,8 @@ RUN go get github.com/dgrijalva/jwt-go
 RUN go get github.com/gorilla/mux
 RUN go get github.com/pborman/uuid
 RUN go get github.com/olivere/elastic
+RUN go get golang.org/x/crypto/bcrypt
 
 EXPOSE 8080
-CMD ["/usr/local/go/bin/go", "run", "main.go", "user.go", "vision.go"]
+CMD ["/usr/local/go/bin/go", "run", "main.go", "handler.go", "user.go", "vision.go"]
 
